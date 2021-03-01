@@ -6,6 +6,9 @@
     <groupId>cn.sliew</groupId>
     <artifactId>sliew</artifactId>
     <version>1</version>
+    <modules>
+        <module>sliew-policy</module>
+    </modules>
     <packaging>pom</packaging>
     <name>sliew</name>
     <description>sliew personal open source projects.</description>
