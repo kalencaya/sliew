@@ -3,12 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache</groupId>
+        <artifactId>apache</artifactId>
+        <version>23</version>
+    </parent>
+
     <groupId>cn.sliew</groupId>
     <artifactId>sliew</artifactId>
-    <version>1</version>
-    <modules>
-        <module>sliew-policy</module>
-    </modules>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>sliew</name>
     <description>sliew personal open source projects.</description>
@@ -40,24 +43,30 @@
         </developer>
     </developers>
 
+    <modules>
+        <module>build-tools</module>
+    </modules>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.test.skip>true</maven.test.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
         <surefire.version>3.0.0-M5</surefire.version>
     </properties>
 
     <distributionManagement>
         <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
+            <id>sonatype-nexus</id>
             <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
         <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>sonatype-nexus</id>
+            <name>Sonatype Nexus Release</name>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 
@@ -68,7 +77,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -79,17 +88,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.8.1</version>
-                    <configuration>
-                        <source>${maven.compiler.source}</source>
-                        <target>${maven.compiler.target}</target>
-                        <testSource>${maven.compiler.source}</testSource>
-                        <testTarget>${maven.compiler.target}</testTarget>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -110,17 +113,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>1.6</version>
-                    <configuration>
-                        <useAgent>true</useAgent>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>sign-artifacts</id>
-                            <goals>
-                                <goal>sign</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -179,6 +171,7 @@
                         <pushChanges>false</pushChanges>
                         <localCheckout>true</localCheckout>
                         <useReleaseProfile>false</useReleaseProfile>
+                        <goals>deploy</goals>
                         <preparationGoals>clean install</preparationGoals>
                         <tagNameFormat>@{project.version}</tagNameFormat>
                     </configuration>
@@ -214,28 +207,63 @@
                     <version>3.2.4</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.rat</groupId>
+                    <artifactId>apache-rat-plugin</artifactId>
+                    <version>0.13</version>
+                </plugin>
+                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>clirr-maven-plugin</artifactId>
                     <version>2.8</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <groupId>com.github.spotbugs</groupId>
-                    <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>4.1.3</version>
+                    <groupId>com.diffplug.spotless</groupId>
+                    <artifactId>spotless-maven-plugin</artifactId>
+                    <version>2.10.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.1.2</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>8.41</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>4.2.0</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.github.spotbugs</groupId>
+                            <artifactId>spotbugs</artifactId>
+                            <version>4.2.3</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.4</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>cobertura-maven-plugin</artifactId>
                     <version>2.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.scalastyle</groupId>
+                    <artifactId>scalastyle-maven-plugin</artifactId>
+                    <version>1.0.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>net.alchim31.maven</groupId>
+                    <artifactId>scala-maven-plugin</artifactId>
+                    <version>4.4.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -244,17 +272,18 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <skip>false</skip><!--not skip compile test classes-->
+                    <!--not skip compile test classes-->
+                    <skip>false</skip>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
+                    <failOnError>false</failOnError>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <skip>true</skip>
+                    <testFailureIgnore>true</testFailureIgnore>
                 </configuration>
             </plugin>
             <plugin>
@@ -276,106 +305,239 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- plugin jacoco report-->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <configuration>
-                    <destFile>target/jacoco.exec</destFile>
-                    <dataFile>target/jacoco.exec</dataFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>jacoco-initialize</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>jacoco-site</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>com.github.spotbugs</groupId>
-                <artifactId>spotbugs-maven-plugin</artifactId>
-                <configuration>
-                    <xmlOutput>true</xmlOutput>
-                    <threshold>medium</threshold>
-                    <effort>default</effort>
-                    <excludeFilterFile>dev-config/spotbugs-exclude.xml</excludeFilterFile>
-                    <failOnError>true</failOnError>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.github.spotbugs</groupId>
-                        <artifactId>spotbugs</artifactId>
-                        <version>4.2.0</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.puppycrawl.tools</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>8.35</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <consoleOutput>true</consoleOutput>
-                    <encoding>UTF-8</encoding>
-                    <configLocation>checkstyle.xml</configLocation>
-                    <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
-                    <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
-                    <failOnViolation>true</failOnViolation>
-                    <violationSeverity>warning</violationSeverity>
-                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                    <sourceDirectories>
-                        <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
-                    </sourceDirectories>
-                    <excludes>**\/generated-sources\/</excludes>
-                    <skip>true</skip>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <configuration>
-                    <check></check>
-                    <aggregate>true</aggregate>
-                    <outputDirectory>./target/cobertura</outputDirectory>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <quiet>true</quiet>
-                    <format>xml</format>
-                    <instrumentation>
-                        <ignoreTrivial>true</ignoreTrivial>
-                    </instrumentation>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
     <profiles>
         <profile>
+            <id>java11</id>
+            <activation>
+                <jdk>11</jdk>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <java.version>11</java.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>java8</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <properties>
+                <java.version>8</java.version>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>spotless</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.diffplug.spotless</groupId>
+                        <artifactId>spotless-maven-plugin</artifactId>
+                        <version>2.10.3</version>
+                        <executions>
+                            <execution>
+                                <id>spotless-check</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <java>
+                                <googleJavaFormat>
+                                    <version>1.8</version>
+                                    <style>AOSP</style>
+                                </googleJavaFormat>
+                                <importOrder/>
+                                <removeUnusedImports/>
+                            </java>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>checkstyle</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <version>3.1.2</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.puppycrawl.tools</groupId>
+                                <artifactId>checkstyle</artifactId>
+                                <version>8.41</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>validate</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <configLocation>/buildtools/maven/checkstyle.xml</configLocation>
+                            <suppressionsLocation>/buildtools/maven/suppressions.xml</suppressionsLocation>
+                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                            <failsOnError>true</failsOnError>
+                            <consoleOutput>true</consoleOutput>
+                            <linkXRef>false</linkXRef>
+                            <encoding>UTF-8</encoding>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+        <profile>
+            <id>spotbugs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                        <version>4.2.0</version>
+                        <dependencies>
+                            <!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
+                            <dependency>
+                                <groupId>com.github.spotbugs</groupId>
+                                <artifactId>spotbugs</artifactId>
+                                <version>4.2.3</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>spotbugs-check</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <xmlOutput>true</xmlOutput>
+                            <xmlOutputDirectory>${project.build.directory}/spotbugs</xmlOutputDirectory>
+                            <threshold>medium</threshold>
+                            <effort>default</effort>
+                            <excludeFilterFile>/buildtools/maven/spotbugs-exclude.xml</excludeFilterFile>
+                            <!--                            <includeFilterFile>/buildtools/maven/spotbugs-include.xml</includeFilterFile>-->
+                            <failOnError>true</failOnError>
+                            <jvmArgs>
+                                <jvmArg>-Xms512m</jvmArg>
+                                <jvmArg>-Xmx1024m</jvmArg>
+                            </jvmArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>jacoco</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.4</version>
+                        <executions>
+                            <execution>
+                                <id>jacoco-initialize</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>check</id>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>jacoco-site</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <destFile>${project.build.directory}/jacoco/jacoco.exec</destFile>
+                            <dataFile>${project.build.directory}/jacoco/jacoco.exec</dataFile>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>cobertura</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <version>2.7</version>
+                        <configuration>
+                            <check/>
+                            <aggregate>true</aggregate>
+                            <outputDirectory>${project.build.directory}/cobertura</outputDirectory>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                            <quiet>true</quiet>
+                            <format>xml</format>
+                            <instrumentation>
+                                <ignoreTrivial>true</ignoreTrivial>
+                            </instrumentation>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
             <id>oss-release</id>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.2.4</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <createSourcesJar>true</createSourcesJar>
+                                    <artifactSet>
+                                        <includes>
+                                            <include>${project.groupId}:*:*</include>
+                                        </includes>
+                                    </artifactSet>
+                                    <filters>
+                                        <filter>
+                                            <artifact>*:*</artifact>
+                                            <excludes>
+                                                <exclude>META-INF/maven/**</exclude>
+                                            </excludes>
+                                        </filter>
+                                    </filters>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
@@ -388,6 +550,7 @@
                             </execution>
                         </executions>
                         <configuration>
+                            <failOnError>false</failOnError>
                             <charset>${project.build.sourceEncoding}</charset>
                             <encoding>${project.build.sourceEncoding}</encoding>
                             <docencoding>${project.build.sourceEncoding}</docencoding>
@@ -409,6 +572,17 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <useAgent>true</useAgent>
+                        </configuration>
                     </plugin>
                     <!-- We want to package up license resources in the JARs produced -->
                     <plugin>

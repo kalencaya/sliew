@@ -6,10 +6,15 @@
     <parent>
         <groupId>cn.sliew</groupId>
         <artifactId>sliew</artifactId>
-        <version>1</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>sliew-policy</artifactId>
+    <artifactId>build-tools</artifactId>
+    <packaging>jar</packaging>
+    <name>${project.artifactId}</name>
+    <description>build tools such as checkstyle、spotbugs and so on.</description>
+    <properties>
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
 
-    <description>Sliew Policy</description>
 
 </project>
