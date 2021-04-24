@@ -12,6 +12,7 @@
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>build tools such as checkstyle、spotbugs and so on.</description>
+
     <properties>
         <maven.test.skip>true</maven.test.skip>
     </properties>
